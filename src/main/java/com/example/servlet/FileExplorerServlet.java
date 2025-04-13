@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-@WebServlet(name="FileExplorerServlet", value = "/file-explorer")
+@WebServlet("/file-explorer")
 public class FileExplorerServlet extends HttpServlet {
 
     @Override
