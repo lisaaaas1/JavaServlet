@@ -31,7 +31,7 @@ public class RegisterServlet extends HttpServlet {
             User newUser = new User(login, password, email);
             UsersInfo.addUser(newUser);
 
-            req.getSession().setAttribute(login, login);
+            req.getSession().setAttribute("login", login);
             resp.sendRedirect( req.getContextPath()+"/file-explorer");
         }
     }

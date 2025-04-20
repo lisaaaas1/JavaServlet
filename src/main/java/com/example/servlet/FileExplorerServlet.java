@@ -29,7 +29,11 @@ public class FileExplorerServlet extends HttpServlet {
         }
 
         String login = (String) session.getAttribute("login");
-        Path userHome = Paths.get(BASE_DIR, login).toRealPath();
+
+        Path userHome = Paths.get(BASE_DIR, login);
+
+        Files.createDirectories(userHome); // безопасно создаёт все недостающие папки
+        userHome = userHome.toRealPath();
 
         String paramPath = req.getParameter("path");
         Path requestedPath;
@@ -51,7 +55,7 @@ public class FileExplorerServlet extends HttpServlet {
         if (!directory.exists()) {
             directory.mkdir();
         }
-
+        //Проверка пути выше
         Path parentPath = requestedPath.getParent();
         if (parentPath != null && parentPath.startsWith(userHome)) {
             req.setAttribute("parentPath", parentPath.toString());
