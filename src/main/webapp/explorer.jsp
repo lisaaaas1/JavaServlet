@@ -32,7 +32,7 @@
     <c:if test="${not empty parentPath}">
         <a href="file-explorer?path=${parentPath.replace('\\', '/')}">Up one level</a><br>
     </c:if>
-    <form action="${pageContext.request.contextPath}/login" method="post" style="display:inline;">
+    <form action="${pageContext.request.contextPath}/logout" method="post" style="display:inline;">
             <button type="submit" class="logout-button">Выйти</button>
         </form></body>
 

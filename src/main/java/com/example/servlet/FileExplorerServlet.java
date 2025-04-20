@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,26 +18,52 @@ import java.util.stream.Collectors;
 @WebServlet("/file-explorer")
 public class FileExplorerServlet extends HttpServlet {
 
+    private static final String BASE_DIR = "C:\\Users\\";
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String currentPath = req.getParameter("path");
-        if (currentPath == null || currentPath.isEmpty()) {
-            currentPath = System.getProperty("user.home"); // Начальная директория
-        }
-
-        File directory = new File(currentPath);
-        if (!directory.exists() || !directory.isDirectory()) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Directory not found");
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("login") == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
-        // Получаем список файлов и папок
+        String login = (String) session.getAttribute("login");
+        Path userHome = Paths.get(BASE_DIR, login).toRealPath();
+
+        String paramPath = req.getParameter("path");
+        Path requestedPath;
+
+        if (paramPath == null || paramPath.isEmpty()) {
+            requestedPath = userHome;
+        } else {
+            try {
+                requestedPath = Paths.get(paramPath).toRealPath();
+                if (!requestedPath.startsWith(userHome)) {
+                    requestedPath = userHome;
+                }
+            } catch (IOException e) {
+                requestedPath = userHome;
+            }
+        }
+
+        File directory = requestedPath.toFile();
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+
+        Path parentPath = requestedPath.getParent();
+        if (parentPath != null && parentPath.startsWith(userHome)) {
+            req.setAttribute("parentPath", parentPath.toString());
+        } else {
+            req.setAttribute("parentPath", null);
+        }
+
         File[] files = directory.listFiles();
         req.setAttribute("files", files);
-        req.setAttribute("currentPath", currentPath);
-        req.setAttribute("parentPath", directory.getParent());
+        req.setAttribute("currentPath", requestedPath.toString());
         req.setAttribute("generatedTime", new Date());
 
-        req.getRequestDispatcher("/index.jsp").forward(req, resp);
+        req.getRequestDispatcher("/explorer.jsp").forward(req, resp);
     }
 }
