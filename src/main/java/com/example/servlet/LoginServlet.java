@@ -30,6 +30,7 @@ public class LoginServlet extends HttpServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
 
+        // создаем сессию
         if(UsersInfo.validateUser(login, password)){
             HttpSession session = req.getSession();
             session.setAttribute("login", login);

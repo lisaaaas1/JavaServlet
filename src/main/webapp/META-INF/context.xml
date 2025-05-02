@@ -2,6 +2,6 @@
     <Manager className="org.apache.catalina.session.PersistentManager"
              saveOnRestart="true">
         <Store className="org.apache.catalina.session.FileStore"
-               directory="C:/Users/Komba/Tomcat/apache-tomcat-10.1.39/temp/sessions"/>
+               directory="C:\Users\Lisa\Downloads\apache-tomcat-10.1.39-windows-x64\sessions"/>
     </Manager>
 </Context>

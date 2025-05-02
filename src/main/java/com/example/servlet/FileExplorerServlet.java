@@ -18,10 +18,12 @@ import java.util.stream.Collectors;
 @WebServlet("/file-explorer")
 public class FileExplorerServlet extends HttpServlet {
 
-    private static final String BASE_DIR = "C:\\Users\\";
+    private static final String BASE_DIR = "C:\\servlets";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        // получаем сессию
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("login") == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
