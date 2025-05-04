@@ -5,13 +5,20 @@ import com.example.servlet.database.DBManager;
 
 import java.sql.*;
 
-
+import com.example.servlet.database.HibernateManager;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 public class UsersInfo {
-   // private static final Map<String, User> users = new HashMap<>();
 
-    public static boolean addUser(User user) {
-        String sql = "INSERT INTO users (login, password, email) VALUES (?, ?, ?)";
+    public static void addUser(User user) {
+        try (Session session = HibernateManager.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+            session.persist(user);
+            tx.commit();
+        }
+
+        /* String sql = "INSERT INTO users (login, password, email) VALUES (?, ?, ?)";
 
         try (Connection conn = DBManager.getConnection();
 
@@ -26,11 +33,15 @@ public class UsersInfo {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }
+        } */
+
     }
 
     public static User getUser(String login) {
-        String sql = "SELECT login, password, email FROM users WHERE login = ?";
+        try (Session session = HibernateManager.getSessionFactory().openSession()) {
+            return session.get(User.class, login);
+        }
+        /* String sql = "SELECT login, password, email FROM users WHERE login = ?";
 
 
         try (Connection conn = DBManager.getConnection();
@@ -50,15 +61,8 @@ public class UsersInfo {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null; */
     }
-
-
-
-    /* public static void addUser(User user){
-        users.put(user.getLogin(), user);
-    }
-*/
 
     public static boolean validateUser(String login, String password){
         User user = getUser(login);
